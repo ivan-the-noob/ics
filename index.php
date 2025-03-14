@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div class="navbar flex-column shadow-sm p-3 collapse show" id="navbar">
+<div class="navbar d-flex justify-content-start flex-column shadow-sm p-3 collapse show" id="navbar">
             <div class="navbar-header d-flex justify-content-between align-items-center w-100">
                 <a class="navbar-brand d-none d-md-block logo-container" href="#">
                     <img src="assets/logo.png" alt="Logo">
@@ -21,13 +21,13 @@
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="calendar.php">
+                <a href="features/admin/web/semi-expandable.php">
                     <i class="fa-solid fa-calendar-days"></i>
-                    <span>Offerings</span>
+                    <span>Semi-Expandable Property</span>
                 </a>
-                <a href="pending.php">
+                <a href="property-plant.php">
                     <i class="fa-solid fa-clock"></i>
-                    <span>Expenses</span>
+                    <span>Property Plant and Equipment</span>
                 </a>
                
             </div>

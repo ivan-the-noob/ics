@@ -1,8 +1,17 @@
-/*Navbar Section*/
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+*{
+    padding: 0;
+    margin: 0;
+    font-family: "Roboto", sans-serif;
+    font-optical-sizing: auto;
+
+}
 
 /*Navbar Section*/
 .navbar {
-    background-color: #FBF9FA;
+    background-color: #85DAF7;  
     display: flex;
     align-items: start;
     padding: 20px;
@@ -11,6 +20,8 @@
     max-width: 230px;
     min-height: 100vh;
     justify-content: start;
+    
+
 }
 .navbar a {
     color: #000;
@@ -72,6 +83,7 @@
     width: 60%;
     height: 15vh;
     margin: auto;
+    margin-bottom: 50px;
 }
 
 .navbar-links {
@@ -118,3 +130,29 @@
 }
 
 /*Navbar Section End*/
+
+/*Table*/
+
+th,td{
+    width: 100px;
+    border: 1px solid #808080 !important;
+
+}
+
+.modal-size{
+    max-width: 600px !important;
+}
+
+/*Table End*/
+
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.modal-dialog input, .modal-dialog textarea, .modal-dialog select{
+    border: 1px solid #000;
+}
