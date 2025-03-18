@@ -17,37 +17,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $description = $_POST['description'];
     $property_number = $_POST['property_number'];
     $unit_measure = $_POST['unit_measure'];
-    $unit_value = $_POST['unit_value'];
+    $unit_value = $_POST['unit_value']; // Maps to 'unit_cost' in ics
     $qty_per_phy_count = $_POST['qty_per_phy_count'];
     $quantity = $_POST['quantity'];
     $value = $_POST['value'];
     $remarks = $_POST['remarks'];
     $in_charge = $_POST['in_charge']; // New field
 
-    // Prepare SQL query to insert data into the database
-    $sql = "INSERT INTO items (article, description, property_number, unit_measure, unit_value, qty_per_phy_count, quantity, value, remarks, in_charge) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Insert into `items` table
+    $sql_items = "INSERT INTO items (article, description, property_number, unit_measure, unit_value, qty_per_phy_count, quantity, value, remarks, in_charge) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-
-    // Prepare statement
-    if ($stmt = $conn->prepare($sql)) {
-        // Bind parameters
+    if ($stmt = $conn->prepare($sql_items)) {
         $stmt->bind_param("ssssiiisss", $article, $description, $property_number, $unit_measure, $unit_value, $qty_per_phy_count, $quantity, $value, $remarks, $in_charge);
 
-        // Execute query
         if ($stmt->execute()) {
-            echo "success"; // Send success response
-        } else {
-            echo "Error executing query: " . $stmt->error; // Send error response to AJAX
-        }
+            // Insert into `ics` table
+            $sql_ics = "INSERT INTO ics (quantity, unit, unit_cost, total_cost, description, inventory_item, estimated_life) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        // Close statement
+            if ($stmt_ics = $conn->prepare($sql_ics)) {
+                $total_cost = $unit_value * $quantity; 
+                $estimated_life = "";
+                $quantity = "";
+                $unit = "";
+                
+
+                $stmt_ics->bind_param("issdsss", $quantity, $unit_measure, $unit_value, $total_cost, $description, $property_number, $estimated_life);
+
+                if ($stmt_ics->execute()) {
+                    echo "success"; // Send success response
+                } else {
+                    echo "Error executing ICS query: " . $stmt_ics->error;
+                }
+                $stmt_ics->close();
+            } else {
+                echo "Error preparing ICS statement: " . $conn->error;
+            }
+        } else {
+            echo "Error executing Items query: " . $stmt->error;
+        }
         $stmt->close();
     } else {
-        // If the SQL statement failed to prepare
-        echo "Error preparing statement: " . $conn->error; // Send error response to AJAX
+        echo "Error preparing Items statement: " . $conn->error;
     }
 }
+
 
 // Close connection
 $conn->close();

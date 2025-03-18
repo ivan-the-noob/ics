@@ -11,6 +11,7 @@
 </head>
 <body>
 
+
 <div class="d-flex">
 <div class="navbar d-flex justify-content-start flex-column shadow-sm p-3 collapse show" id="navbar">
             <div class="navbar-header d-flex justify-content-between align-items-center w-100">
@@ -31,6 +32,12 @@
                     <i class="fa-solid fa-clock"></i>
                     <span>Property Plant and Equipment</span>
                 </a>
+                  <a href="ics.php">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>ICS</span>
+
+                    
+                </a>
                
             </div>
             
@@ -39,7 +46,79 @@
     <h3 class="text-center p-4">Semi Expandable Property</h3>
 
     
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end gap-1">
+    <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#pdfModal">
+        Edit PDF Content
+    </button>
+    <a href="../../../generate_pdf.php" class="btn btn-danger mb-2">Save as PDF</a>
+    <a href="../../../generate_pdf.php" class="btn btn-success mb-2">Save as EXCEL</a>
+    <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pdfModalLabel">Edit PDF Content</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+            <?php
+            require '../../../db.php'; // Include database connection
+
+            // Fetch record where id = 1
+            $id = 1; // Change this if needed
+            $sql = "SELECT * FROM pdf_info WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc(); // Fetch as associative array
+
+            $stmt->close();
+            $conn->close();
+            ?>
+
+                <form action="../function/php/pdf_info.php" method="POST">
+                    <!-- Hidden input for ID -->
+                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+
+                    <div class="mb-3">
+                        <label class="form-label">Accountable Officer</label>
+                        <input type="text" name="accountable_officer" class="form-control" required value="<?= htmlspecialchars($row['accountable_officer']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Official Description</label>
+                        <input type="text" name="official_description" class="form-control" required value="<?= htmlspecialchars($row['official_description']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Agency/Office</label>
+                        <input type="text" name="agency_office" class="form-control" required value="<?= htmlspecialchars($row['agency_office']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Year</label>
+                        <input type="text" name="year" class="form-control" required value="<?= htmlspecialchars($row['year']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" required value="<?= htmlspecialchars($row['address']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required value="<?= htmlspecialchars($row['email']) ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telephone Number</label>
+                        <input type="tel" name="tel_no" class="form-control" required value="<?= htmlspecialchars($row['tel_no']) ?>">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addItemModal">Add New</button>
     <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-size">
