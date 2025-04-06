@@ -8,6 +8,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
 </head>
 <body>
 
@@ -50,7 +53,7 @@
     <button type="button" class="btn btn-warning mb-2" data-bs-toggle="modal" data-bs-target="#pdfModal">
         Edit PDF Content
     </button>
-    <a href="../../../generate_pdf.php" class="btn btn-danger mb-2">Save as PDF</a>
+    <a href="javascript:void(0);" class="btn btn-danger mb-2" id="save-pdf">Save as PDF</a>
     <a href="../../../generate_pdf.php" class="btn btn-success mb-2">Save as EXCEL</a>
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -229,7 +232,6 @@ $result = $conn->query($sql);
             <th>Quantity</th>
             <th>Value</th>
         </tr>
-       
     </thead>
     <tbody>
     <?php
@@ -257,15 +259,13 @@ $result = $conn->query($sql);
                 }
 
                 echo "<td class='text-center'>" . htmlspecialchars($row['remarks']) . " <br><hr> " . htmlspecialchars($row['in_charge']) . "</td>";
-
                 echo "</tr>";
             }
         } else {
             // If no records are found
             echo "<tr><td colspan='9'>No data found</td></tr>";
         }
-        ?>
-
+    ?>
     </tbody>
 </table>
 
@@ -324,4 +324,22 @@ $conn->close();
 
 
 </script>
+<script>
+  document.getElementById('save-pdf').addEventListener('click', function() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Get the table element
+    const table = document.querySelector('table');
+
+    // Add the table content to the PDF using autoTable
+    doc.autoTable({ html: table });
+
+    // Save the PDF
+    doc.save('table_content.pdf');
+  });
+</script>
+
+
+
 </html>

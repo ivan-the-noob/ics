@@ -56,6 +56,15 @@ $result = $conn->query($sql);
 
 ?>
 
+<?php
+// Include database connection file
+include('../../../db.php');
+
+// Query to fetch data from items table
+$sql = "SELECT * FROM ics";
+$result = $conn->query($sql);
+?>
+
 <table class="table table-light">
     <thead>
         <tr>
@@ -65,6 +74,7 @@ $result = $conn->query($sql);
             <th rowspan="2" class="text-center">Description</th>
             <th rowspan="2" class="text-center">Inventory Item No.</th>
             <th rowspan="2" class="text-center">Estimated Useful Life</th>
+            <th rowspan="2" class="text-center">Image</th>
             <th rowspan="2" class="text-center">Actions</th>
         </tr>
         <tr>
@@ -86,19 +96,55 @@ $result = $conn->query($sql);
                 echo "<td>" . htmlspecialchars($row['description']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['inventory_item']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['estimated_life']) . "</td>";
+                
+                // Display image if exists and trigger modal on click
+                echo "<td class='text-center'>";
+                if (!empty($row['image'])) {
+                    echo "<a href='#' data-bs-toggle='modal' data-bs-target='#imageModal" . $row['id'] . "'>";
+                    echo "<img src='../../../assets/images/" . htmlspecialchars($row['image']) . "' alt='Image' width='50' height='50'>";
+                    echo "</a>";
+                } else {
+                    echo "No image";
+                }
+                echo "</td>";
+
+                // Update and Delete buttons
                 echo "<td><div class='d-flex gap-1 mx-auto justify-content-center'>
                         <button class='btn btn-warning text-white' data-bs-toggle='modal' data-bs-target='#updateModal' data-id='" . $row['id'] . "' data-quantity='" . $row['quantity'] . "' data-unit='" . $row['unit'] . "' data-unit_cost='" . $row['unit_cost'] . "' data-description='" . $row['description'] . "' data-inventory_item='" . $row['inventory_item'] . "' data-estimated_life='" . $row['estimated_life'] . "'>Update</button>
                         <button class='btn btn-danger text-white' data-bs-toggle='modal' data-bs-target='#deleteModal' data-id='" . $row['id'] . "'>Delete</button>
                       </div></td>";
                 echo "</tr>";
+
+                // Modal structure for the image
+                if (!empty($row['image'])) {
+                    echo "
+                    <div class='modal fade' id='imageModal" . $row['id'] . "' tabindex='-1' aria-labelledby='imageModalLabel" . $row['id'] . "' aria-hidden='true'>
+                        <div class='modal-dialog modal-dialog-centered'>
+                            <div class='modal-content'>
+                                <div class='modal-header'>
+                                    <h5 class='modal-title' id='imageModalLabel" . $row['id'] . "'>Image</h5>
+                                    <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                </div>
+                                <div class='modal-body'>
+                                    <!-- Zoomed-in image -->
+                                    <img src='../../../assets/images/" . htmlspecialchars($row['image']) . "' class='img-fluid' alt='Image'>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ";
+                }
+
             }
         } else {
             // If no records are found
-            echo "<tr><td colspan='8'>No data found</td></tr>";
+            echo "<tr><td colspan='9'>No data found</td></tr>";
         }
     ?>
-    </tbody>
+</tbody>
+
 </table>
+
 
 <!-- Update Modal -->
 <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
@@ -109,7 +155,7 @@ $result = $conn->query($sql);
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="../function/php/update.php" method="POST">
+            <form action="../function/php/update.php" method="POST" enctype="multipart/form-data">  
                     <input type="hidden" id="updateId" name="id">
                     <div class="mb-3">
                         <label for="updateQuantity" class="form-label">Quantity</label>
@@ -134,6 +180,10 @@ $result = $conn->query($sql);
                     <div class="mb-3">
                         <label for="updateEstimatedLife" class="form-label">Estimated Useful Life</label>
                         <input type="text" class="form-control" id="updateEstimatedLife" name="estimated_life">
+                    </div>
+                    <div class="mb-3">
+                        <label for="updateImage" class="form-label">Upload Image</label>
+                        <input type="file" class="form-control" id="updateImage" name="image">
                     </div>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </form>
