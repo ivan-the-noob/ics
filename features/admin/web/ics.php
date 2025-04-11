@@ -1,3 +1,12 @@
+<?php 
+session_start();
+
+// Now you can safely include other files and start using $_SESSION
+include('../../../db.php');
+
+
+$userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +44,12 @@
                     <i class="fa-solid fa-clock"></i>
                     <span>ICS</span>
                 </a>
-               
+           
+                    <a href="../function/php/logout.php">
+                        <i class="fa-solid fa-clock"></i>
+                        <span>Logout</span>   
+                    </a>
+   
             </div>
             
 </div>
@@ -47,23 +61,22 @@
    
 </div>
 <?php
-// Include database connection file
-include('../../../db.php');
+$userEmail = $_SESSION['email'];
 
-// Query to fetch data from items table
-$sql = "SELECT * FROM ics";
-$result = $conn->query($sql);
+$sql = "SELECT * FROM ics WHERE email = ?";
+$stmt = $conn->prepare($sql);
 
+// Add this to debug:
+if (!$stmt) {
+    die("Prepare failed: " . $conn->error);
+}
+
+$stmt->bind_param("s", $userEmail);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
-<?php
-// Include database connection file
-include('../../../db.php');
 
-// Query to fetch data from items table
-$sql = "SELECT * FROM ics";
-$result = $conn->query($sql);
-?>
 
 <table class="table table-light">
     <thead>

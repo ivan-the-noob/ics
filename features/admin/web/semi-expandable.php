@@ -1,3 +1,17 @@
+<?php 
+session_start();
+
+// Now you can safely include other files and start using $_SESSION
+include('../../../db.php');
+
+// Check if the session is valid (if the user is logged in)
+if (!isset($_SESSION['email'])) {
+    header("Location: ../../../index.php"); // Redirect if not logged in
+    exit();
+}
+
+$userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +24,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 
 </head>
 <body>
@@ -37,10 +53,14 @@
                 </a>
                   <a href="ics.php">
                     <i class="fa-solid fa-clock"></i>
-                    <span>ICS</span>
-
-                    
+                    <span>ICS</span>   
                 </a>
+
+                <a href="../function/php/logout.php">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>Logout</span>   
+                </a>
+               
                
             </div>
             
@@ -54,7 +74,7 @@
         Edit PDF Content
     </button>
     <a href="javascript:void(0);" class="btn btn-danger mb-2" id="save-pdf">Save as PDF</a>
-    <a href="../../../generate_pdf.php" class="btn btn-success mb-2">Save as EXCEL</a>
+    <button id="export-excel" class="btn btn-success mb-2">Save as EXCEL</button>
     <div class="modal fade" id="pdfModal" tabindex="-1" aria-labelledby="pdfModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -206,15 +226,17 @@
         New Semi-Expandable added.
     </div>
 </div>
-<?php
-// Include database connection file
-include('../../../db.php');
+    <?php
+   
+    include('../../../db.php');
 
-// Query to fetch data from items table
-$sql = "SELECT * FROM items";
-$result = $conn->query($sql);
-
-?>
+    // Query to fetch data from items table
+    $sql = "SELECT * FROM items WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $userEmail);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    ?>
 
 <table class="table table-light">
     <thead>
@@ -244,7 +266,7 @@ $result = $conn->query($sql);
                 echo "<td>" . htmlspecialchars($row['description']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['property_number']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['unit_measure']) . "</td>";
-                echo "<td>₱" . number_format($row['unit_value'], 2) . "</td>";
+                echo "<td>P" . number_format($row['unit_value'], 2) . "</td>";
                 echo "<td>" . htmlspecialchars($row['qty_per_phy_count']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['quantity']) . "</td>";
 
@@ -263,7 +285,7 @@ $result = $conn->query($sql);
             }
         } else {
             // If no records are found
-            echo "<tr><td colspan='9'>No data found</td></tr>";
+            echo "<tr><td colspan='9'></td></tr>";
         }
     ?>
     </tbody>
@@ -281,64 +303,226 @@ $conn->close();
 
     
 </body>
-<script>
-   $(document).ready(function() {
-    // Check if the page was reloaded after a successful submission
-    if (localStorage.getItem('showToast')) {
-        $('#toast').fadeIn().delay(3000).fadeOut();
-        localStorage.removeItem('showToast'); // Remove the flag after showing the toast
-    }
 
-    // Handle form submission
-    $('#addItemForm').submit(function(e) {
-        e.preventDefault(); // Prevent form from submitting normally
-        
-        var formData = $(this).serialize(); // Serialize form data
-        
-        $.ajax({
-            url: '../function/php/save.php',  // Your PHP file for saving data
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                // Check if response is empty
-                if (response.trim() === '') {
-                    console.error("Server returned an empty response.");
-                } else {
-                    console.log("Server Response: ", response); // Log the server response in console
-                
-                    // Check if the response is 'success' (success message from PHP)
-                    if (response.trim() === 'success') {
-                        localStorage.setItem('showToast', 'true'); // Set flag before reloading
-                        location.reload(); // Reload the page immediately
-                    }
-                }
-            },
-            error: function(xhr, status, error) {
-                // Log detailed error info in console
-                console.error('AJAX Error: ', error);   // Log the error type (status)
-                console.error('Response Text: ', xhr.responseText); // Log the response text (may contain error info)
-            }
-        });
-    });
+<script>
+document.getElementById("export-excel").addEventListener("click", function () {
+    // Select the table
+    var table = document.querySelector("table");
+
+    // Convert table to worksheet
+    var wb = XLSX.utils.table_to_book(table, {sheet: "Semi Expandable Property"});
+
+    // Save to file 
+    XLSX.writeFile(wb, "semi_expandable_property.xlsx");
 });
-
-
 </script>
-<script>
-  document.getElementById('save-pdf').addEventListener('click', function() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
 
-    // Get the table element
+<script>
+  document.getElementById('save-pdf').addEventListener('click', function () {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape" });
+
+    // Set font to Roboto with a normal weight
+    doc.setFont("Roboto");
+
+    const headerLines = [
+      "Republic of the Philippines",
+      "Department of Education",
+      "REGION IV-A CALABARZON",
+      "SCHOOLS DIVISION OFFICE OF CAVITE CITY",
+      "SANGLEY ELEMENTARY SCHOOL",
+      "SANGLEY POINT, CAVITE CITY"
+    ];
+
+    const reportLines = [
+      "REPORT ON THE PHYSICAL COUNT OF SEMI EXPENDABLE PROPERTY",
+      "I.C.T. EQUIPMENT",
+      "(type of Property, Plant and Equipment)",
+      "As of DECEMBER 31, 2023"
+    ];
+
+    const additionalParagraph = [
+      "Fund Cluster: Department of Education-SDO Cavite City"
+    ];
+
+    // Set font size for the header
+    doc.setFontSize(10);
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    let currentY = 10;
+    const margin = 15;
+
+    // Header
+    headerLines.forEach(line => {
+      const textWidth = doc.getTextWidth(line);
+      const x = (pageWidth - textWidth) / 2;
+      doc.text(line, x, currentY);
+      currentY += 5;
+    });
+
+    // Divider
+    currentY += 2;
+    doc.setLineWidth(0.3);
+    doc.line(margin, currentY, pageWidth - margin, currentY);
+    currentY += 7;
+
+    // Report Title with special formatting
+    doc.setFontSize(11);
+
+    // Line 1: Bold with weight 700
+    doc.setFont("Roboto", "normal", 700);
+    let text1 = reportLines[0];
+    let text1Width = doc.getTextWidth(text1);
+    doc.text(text1, (pageWidth - text1Width) / 2, currentY);
+    currentY += 5;
+
+    // Line 2: Bold with weight 700 + Underline
+    let text2 = reportLines[1];
+    let text2Width = doc.getTextWidth(text2);
+    let text2X = (pageWidth - text2Width) / 2;
+    doc.text(text2, text2X, currentY);
+    doc.line(text2X, currentY + 1, text2X + text2Width, currentY + 1); // underline
+    currentY += 5;
+
+    // Line 3: Normal
+    doc.setFont("Roboto", "normal");
+    let text3 = reportLines[2];
+    let text3Width = doc.getTextWidth(text3);
+    doc.text(text3, (pageWidth - text3Width) / 2, currentY);
+    currentY += 5;
+
+    // Line 4: Bold with weight 700 + partial underline
+    doc.setFont("Roboto", "normal", 700);
+    const fullText4 = reportLines[3]; // "As of DECEMBER 31, 2023"
+    const prefix4 = "As of ";
+    const underlined4 = "DECEMBER 31, 2023";
+
+    let prefixWidth = doc.getTextWidth(prefix4);
+    let underlineWidth = doc.getTextWidth(underlined4);
+    let totalWidth = prefixWidth + underlineWidth;
+    let startX = (pageWidth - totalWidth) / 2;
+
+    doc.text(prefix4, startX, currentY);
+    doc.text(underlined4, startX + prefixWidth, currentY);
+    doc.line(startX + prefixWidth, currentY + 1, startX + prefixWidth + underlineWidth, currentY + 1); // underline
+    currentY += 7;
+
+    // Additional paragraph
+    doc.setFont("Roboto", "normal");
+    doc.setFontSize(10);
+    doc.text(additionalParagraph[0], margin, currentY);
+    currentY += 5;
+
+    // Underlined officer info
+    let baseLine = "From which ";
+    let underlineParts = [
+      "LOUIE G. VERGARA",
+      "SCHOOL PROPERTY CUSTODIAN",
+      "SANGLEY ELEMENTARY SCHOOL"
+    ];
+
+    let x = margin;
+    doc.text(baseLine, x, currentY);
+    x += doc.getTextWidth(baseLine);
+
+    underlineParts.forEach((text, i) => {
+      doc.text(text, x, currentY);
+      doc.line(x, currentY + 1, x + doc.getTextWidth(text), currentY + 1);
+      x += doc.getTextWidth(text);
+
+      const punctuation = i === 2 ? " is accountable, having assumed such on " : ", ";
+      doc.text(punctuation, x, currentY);
+      x += doc.getTextWidth(punctuation);
+    });
+
+    const janText = "January 2023";
+    doc.text(janText, x, currentY);
+    doc.line(x, currentY + 1, x + doc.getTextWidth(janText), currentY + 1);
+    currentY += 5;
+
+    doc.text("                       (Name of Accountable Officer)          (Official Description)            (Agency Office)", margin, currentY);
+    currentY += 5;
+
+    // Table
     const table = document.querySelector('table');
 
-    // Add the table content to the PDF using autoTable
-    doc.autoTable({ html: table });
+    doc.autoTable({
+      html: table,
+      startY: currentY + 5,
+      styles: {
+        font: 'Roboto',
+        fillColor: false,
+        textColor: [0, 0, 0],
+        lineWidth: 0.2,
+        lineColor: [0, 0, 0],
+        fontSize: 10,
+        halign: 'center'
+      },
+      headStyles: {
+        font: 'Roboto',
+        fillColor: false,
+        textColor: [0, 0, 0],
+        lineWidth: 0.2,
+        lineColor: [0, 0, 0],
+      },
+      bodyStyles: {
+        font: 'Roboto',
+        fillColor: false,
+        textColor: [0, 0, 0],
+        lineWidth: 0.2,
+        lineColor: [0, 0, 0],
+      }
+    });
 
-    // Save the PDF
+    // Footer: Address, Email, Tel No. formatting
+    const footerText = [
+      { label: "Address: ", value: "Riego De Dios Street, Sangley Point, Cavite City - 4100" },
+      { label: "Email: ", value: "sangleyelementaryschool@gmail.com" },
+      { label: "Tel No. ", value: "(046) 431-7187" }
+    ];
+
+    // Add footer
+    footerText.forEach((line, index) => {
+      const labelWidth = doc.getTextWidth(line.label);
+      let x = margin;
+
+      // Bold for Address, Email, Tel No. labels only
+      doc.setFont("Roboto", "normal", 500);  // Set font to bold (weight 700) for labels only
+      doc.text(line.label, x, doc.internal.pageSize.height - 15 + (index * 5));
+      x += labelWidth;
+
+      // For email, change color to blue and underline it
+      if (line.label === "Email: ") {
+        doc.setTextColor(0, 0, 255); // Set blue color for email
+        doc.text(line.value, x, doc.internal.pageSize.height - 15 + (index * 5));
+        const emailWidth = doc.getTextWidth(line.value);
+        doc.setLineWidth(0.3);
+        doc.line(x, doc.internal.pageSize.height - 15 + (index * 5) + 1, x + emailWidth, doc.internal.pageSize.height - 15 + (index * 5) + 1); // Underline
+        doc.setTextColor(0, 0, 0); // Reset text color back to black for the next line
+      } else {
+        // For other labels (Address, Tel No.), normal font color
+        doc.setTextColor(0, 0, 0); 
+        doc.text(line.value, x, doc.internal.pageSize.height - 15 + (index * 5));
+      }
+    });
+
+    // Add a footer line with margin and black color
+    const footerLineY = doc.internal.pageSize.height - 22; // Position for the footer line
+    doc.setLineWidth(0.5); // Line width
+    doc.setDrawColor(0, 0, 0); // Ensure the line is black
+    doc.line(margin, footerLineY, pageWidth - margin, footerLineY); // Draw the line
+
     doc.save('table_content.pdf');
   });
 </script>
+
+
+
+
+
+
+
+<script src="jspdf.plugin.autotable.js"></script>
 
 
 
