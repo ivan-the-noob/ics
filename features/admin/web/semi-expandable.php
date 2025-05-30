@@ -152,6 +152,8 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
             </div>  
             <div class="modal-body">
             <form id="addItemForm">
+            <input type="hidden" name="email" value="<?php echo htmlspecialchars($userEmail); ?>">
+
             <div class="d-flex  gap-2">
             <div class="mb-3 w-50">
                 <label for="article" class="form-label">Article</label>
@@ -215,6 +217,34 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
             </div>
                 <button type="submit" class="btn btn-primary w-50 d-flex mx-auto align-items-center justify-content-center text-center">Submit</button>
             </form>
+            <script>
+$(document).ready(function() {
+    $('#addItemForm').on('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const formData = $(this).serialize(); // Serialize form data
+
+        $.ajax({
+            url: '../function/php/save.php', // Update this to your PHP script path
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.trim() === 'success') {
+                    alert('Item added successfully!');
+                    $('#addItemForm')[0].reset(); // Reset the form
+                } else {
+                    alert('Failed to add item: ' + response);
+                }
+            },
+            error: function(xhr, status, error) {
+                alert('An error occurred: ' + error);
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
 
             </div>
             </div>
