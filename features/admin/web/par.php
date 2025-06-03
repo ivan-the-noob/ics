@@ -43,11 +43,11 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                     <i class="fa-solid fa-gauge-high"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="semi-expandable.php" class="navbar-highlight">
+                <a href="semi-expandable.php" >
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>Semi-Expandable Property</span>
                 </a>
-                <a href="par.php">
+                <a href="par.php" class="navbar-highlight">
                     <i class="fa-solid fa-clock"></i>
                     <span>Property Acknowledgement Receipt</span>
                 </a>
@@ -271,7 +271,7 @@ $(document).ready(function() {
     include('../../../db.php');
 
     // Define the desired type
-    $type = 'semi';
+    $type = 'par';
 
     // Query to fetch data from items table with specific email and type
     $sql = "SELECT * FROM items WHERE email = ? AND type = ?";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2025 at 11:08 AM
+-- Generation Time: Jun 03, 2025 at 09:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,20 +38,22 @@ CREATE TABLE `ics` (
   `estimated_life` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `image` varchar(255) DEFAULT NULL,
-  `email` varchar(255) NOT NULL
+  `email` varchar(255) NOT NULL,
+  `type` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ics`
 --
 
-INSERT INTO `ics` (`id`, `quantity`, `unit`, `unit_cost`, `total_cost`, `description`, `inventory_item`, `estimated_life`, `created_at`, `image`, `email`) VALUES
-(2, 3, '1', 1.00, 1.00, '1', '1', 'N/A', '2025-03-17 01:03:37', 'img_67e21013a75607.56060426.png', ''),
-(3, 0, '1', 1.00, 2.00, 'dasdasds', '1', '5 years', '2025-03-17 03:04:09', 'img_67e215c2e267d1.78732467.jpg', ''),
-(5, 0, 'AA', 1.00, 1.00, 'A', 'A', '', '2025-05-30 08:36:36', NULL, ''),
-(6, 0, '1', 11.00, 121.00, '1', '1', '', '2025-05-30 08:40:24', NULL, 'admin@gmail.com'),
-(7, 0, '1', 1.00, 1.00, '1', '1', '', '2025-05-30 08:47:23', NULL, '<br />\r\n<b>Warning</b>:  Undefined variable $UserEmail in <b>C:\\xampp\\htdocs\\ics\\features\\admin\\web\\semi-expandable.php</b> on line <b>155</b><br />\r\n'),
-(8, 0, '1', 11.00, 11.00, '1', '1', '', '2025-05-30 08:50:36', 'img_6839717e4ffc16.04847527.jpg', 'admin@gmail.com');
+INSERT INTO `ics` (`id`, `quantity`, `unit`, `unit_cost`, `total_cost`, `description`, `inventory_item`, `estimated_life`, `created_at`, `image`, `email`, `type`) VALUES
+(2, 3, '1', 1.00, 1.00, '1', '1', 'N/A', '2025-03-17 01:03:37', 'img_67e21013a75607.56060426.png', '', ''),
+(3, 0, '1', 1.00, 2.00, 'dasdasds', '1', '5 years', '2025-03-17 03:04:09', 'img_67e215c2e267d1.78732467.jpg', '', ''),
+(5, 0, 'AA', 1.00, 1.00, 'A', 'A', '', '2025-05-30 08:36:36', NULL, '', ''),
+(6, 0, '1', 11.00, 121.00, '1', '1', '', '2025-05-30 08:40:24', NULL, 'admin@gmail.com', ''),
+(7, 0, '1', 1.00, 1.00, '1', '1', '', '2025-05-30 08:47:23', NULL, '<br />\r\n<b>Warning</b>:  Undefined variable $UserEmail in <b>C:\\xampp\\htdocs\\ics\\features\\admin\\web\\semi-expandable.php</b> on line <b>155</b><br />\r\n', ''),
+(8, 0, '1', 11.00, 11.00, '1', '1', '', '2025-05-30 08:50:36', 'img_6839717e4ffc16.04847527.jpg', 'admin@gmail.com', ''),
+(9, 312321, '312312', 31231.00, 99999999.99, 'dasdas', '8321831', '', '2025-06-03 02:33:47', NULL, 'admin@gmail.com', 'semi-expendable');
 
 -- --------------------------------------------------------
 
@@ -71,24 +73,26 @@ CREATE TABLE `items` (
   `value` decimal(10,2) NOT NULL,
   `remarks` text DEFAULT NULL,
   `in_charge` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL
+  `email` varchar(255) NOT NULL,
+  `type` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `items`
 --
 
-INSERT INTO `items` (`id`, `article`, `description`, `property_number`, `unit_measure`, `unit_value`, `qty_per_phy_count`, `quantity`, `value`, `remarks`, `in_charge`, `email`) VALUES
-(10, 'ICT EQUIPMENT', 'Laptop, HP 242 Notebook (Batch no. 25)', '2014-05-03-0001-12', 'Package', 26000.00, 1, 1, 1.00, 'Serviceable', 'Mr. Manalo', ''),
-(16, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'Laptop', '2014-05-03-0001-12', '33', 33.00, 33, 33, 33.00, '321', '12', ''),
-(17, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'test', '2014-05-03-0001-12', '1', 1.00, 1, 1, 1.00, 'test', 'test', ''),
-(18, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 1.00, 1, 1, 1.00, '1', '1', ''),
-(19, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', 'dasdasds', '1', '1', 1.00, 1, 2, 1.00, '1', '1', ''),
-(20, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', 'dsadas', 'd', '312', 312.00, 312, 12321, 12.00, '1232', '132', ''),
-(21, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'A', 'A', 'AA', 1.00, 1, 1, 1.00, '1', '1', ''),
-(22, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', '1', '1', '1', 11.00, 1, 11, 1.00, '1', '1', ''),
-(23, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 1.00, 1, 1, 1.00, '1', '1', '<br />\n<b>Warning</b>:  Undefined variable $UserEmail in <b>C:\\xampp\\htdocs\\ics\\features\\admin\\web\\semi-expandable.php</b> on line <b>155</b><br />\n'),
-(24, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 11.00, 1, 1, 1.00, '1', '1', 'admin@gmail.com');
+INSERT INTO `items` (`id`, `article`, `description`, `property_number`, `unit_measure`, `unit_value`, `qty_per_phy_count`, `quantity`, `value`, `remarks`, `in_charge`, `email`, `type`) VALUES
+(10, 'ICT EQUIPMENT', 'Laptop, HP 242 Notebook (Batch no. 25)', '2014-05-03-0001-12', 'Package', 26000.00, 1, 1, 1.00, 'Serviceable', 'Mr. Manalo', '', ''),
+(16, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'Laptop', '2014-05-03-0001-12', '33', 33.00, 33, 33, 33.00, '321', '12', '', ''),
+(17, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'test', '2014-05-03-0001-12', '1', 1.00, 1, 1, 1.00, 'test', 'test', '', ''),
+(18, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 1.00, 1, 1, 1.00, '1', '1', '', ''),
+(19, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', 'dasdasds', '1', '1', 1.00, 1, 2, 1.00, '1', '1', '', ''),
+(20, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', 'dsadas', 'd', '312', 312.00, 312, 12321, 12.00, '1232', '132', '', ''),
+(21, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'A', 'A', 'AA', 1.00, 1, 1, 1.00, '1', '1', '', ''),
+(22, 'SEMI-EXPENDABLE TECHNICAL & SCIENTIFIC EQUIPMENT', '1', '1', '1', 11.00, 1, 11, 1.00, '1', '1', '', ''),
+(23, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 1.00, 1, 1, 1.00, '1', '1', '<br />\n<b>Warning</b>:  Undefined variable $UserEmail in <b>C:\\xampp\\htdocs\\ics\\features\\admin\\web\\semi-expandable.php</b> on line <b>155</b><br />\n', ''),
+(24, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', '1', '1', '1', 11.00, 1, 1, 1.00, '1', '1', 'admin@gmail.com', ''),
+(25, 'SEMI-EXPENDABLE OFFICE EQUIPMENT', 'dasdas', '8321831', '312312', 31231.00, 312312, 312321, 12312.00, '312312', 'ana', 'admin@gmail.com', 'semi');
 
 -- --------------------------------------------------------
 
@@ -174,13 +178,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `ics`
 --
 ALTER TABLE `ics`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `pdf_info`

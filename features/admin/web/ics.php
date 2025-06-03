@@ -36,9 +36,9 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>Semi-Expandable Property</span>
                 </a>
-                <a href="property-plant.php">
+                <a href="par.php">
                     <i class="fa-solid fa-clock"></i>
-                    <span>Property Plant and Equipment</span>
+                    <span>Property Acknowledgement Receipt</span>
                 </a>
                 <a href="ics.php" class="navbar-highlight">
                     <i class="fa-solid fa-clock"></i>
