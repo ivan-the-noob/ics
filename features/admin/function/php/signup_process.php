@@ -12,7 +12,7 @@ if (isset($_POST['submit'])) {
 
     if ($stmt->execute()) {
         // Redirect to login page or another page after successful signup
-        header("Location: ../../../../signup.php?success=1"); // Change 'login.php' to your desired page
+        header("Location: ../../../../index.php?success=1"); // Change 'login.php' to your desired page
         exit(); // Ensure no further code is executed after redirection
     } else {
         echo "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
