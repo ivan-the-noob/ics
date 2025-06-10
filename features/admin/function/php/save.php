@@ -33,15 +33,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bind_param("sssssssiiiss", $email, $type, $article, $description, $property_number, $unit_measure, $unit_value, $qty_per_phy_count, $quantity, $value, $remarks, $in_charge);
 
         if ($stmt->execute()) {
+            // 🔢 Generate the next ICS_NO (e.g., 2025-001)
+            $ics_prefix = '2025-';
+            $next_number = 1;
+
+            $ics_check = $conn->query("SELECT MAX(ics_no) AS max_ics FROM ics");
+            if ($ics_check && $row = $ics_check->fetch_assoc()) {
+                if (!empty($row['max_ics'])) {
+                    $last_number = (int)substr($row['max_ics'], 5);
+                    $next_number = $last_number + 1;
+                }
+            }
+
+            $ics_no = $ics_prefix . str_pad($next_number, 3, '0', STR_PAD_LEFT);
+
             // Insert into `ics` table
-            $sql_ics = "INSERT INTO ics (email, type, quantity, unit, unit_cost, total_cost, description, inventory_item, estimated_life) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql_ics = "INSERT INTO ics (ics_no, email, type, quantity, unit, unit_cost, total_cost, description, inventory_item, estimated_life) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             if ($stmt_ics = $conn->prepare($sql_ics)) {
                 $total_cost = $unit_value * $quantity;
                 $estimated_life = "";
 
-                $stmt_ics->bind_param("ssissdsss", $email, $type, $quantity, $unit_measure, $unit_value, $total_cost, $description, $property_number, $estimated_life);
+                $stmt_ics->bind_param("sssissdsss", $ics_no, $email, $type, $quantity, $unit_measure, $unit_value, $total_cost, $description, $property_number, $estimated_life);
 
                 if ($stmt_ics->execute()) {
                     echo "success";

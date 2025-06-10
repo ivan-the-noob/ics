@@ -1,5 +1,5 @@
 <?php
-    // db.php
+ 
     // $servername = "localhost";
     // $username = "root"; // your database username
     // $password = ""; // your database password
@@ -7,7 +7,7 @@
 
     $servername = "localhost";
     $username = "u373116035_ics"; // your database username
-    $password = "#sangley2323"; // your database password
+    $password = "#Sangley2323"; // your database password
     $dbname = "u373116035_ics"; // your database name
 
 

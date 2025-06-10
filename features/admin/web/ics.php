@@ -28,10 +28,7 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                 </a>
             </div>
             <div class="navbar-links">
-                <a href="dashboard.php">
-                    <i class="fa-solid fa-gauge-high"></i>
-                    <span>Dashboard</span>
-                </a>
+               
                 <a href="semi-expandable.php">
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>Semi-Expandable Property</span>
@@ -42,8 +39,13 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                 </a>
                 <a href="ics.php" class="navbar-highlight">
                     <i class="fa-solid fa-clock"></i>
-                    <span>ICS</span>
+                    <span>ICS SEMI</span>
                 </a>
+                <a href="ics-par.php">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>ICS PAR</span>
+                </a>
+           
            
                     <a href="../function/php/logout.php">
                         <i class="fa-solid fa-clock"></i>
@@ -63,7 +65,7 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
 <?php
 $userEmail = $_SESSION['email'];
 
-$sql = "SELECT * FROM ics WHERE email = ?";
+$sql = "SELECT * FROM ics WHERE email = ? AND type = 'semi-expandable'";
 $stmt = $conn->prepare($sql);
 
 // Add this to debug:
@@ -75,6 +77,7 @@ $stmt->bind_param("s", $userEmail);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
+
 
 
 
@@ -125,6 +128,7 @@ $result = $stmt->get_result();
                 echo "<td><div class='d-flex gap-1 mx-auto justify-content-center'>
                         <button class='btn btn-warning text-white' data-bs-toggle='modal' data-bs-target='#updateModal' data-id='" . $row['id'] . "' data-quantity='" . $row['quantity'] . "' data-unit='" . $row['unit'] . "' data-unit_cost='" . $row['unit_cost'] . "' data-description='" . $row['description'] . "' data-inventory_item='" . $row['inventory_item'] . "' data-estimated_life='" . $row['estimated_life'] . "'>Update</button>
                         <button class='btn btn-danger text-white' data-bs-toggle='modal' data-bs-target='#deleteModal' data-id='" . $row['id'] . "'>Delete</button>
+                        <a href='../function/php/download_excel.php?id=" . $row['id'] . "' class='btn btn-success text-white'>Download</a>
                       </div></td>";
                 echo "</tr>";
 

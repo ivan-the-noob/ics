@@ -39,10 +39,7 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                 </a>
             </div>
             <div class="navbar-links">
-                <a href="dashboard.php">
-                    <i class="fa-solid fa-gauge-high"></i>
-                    <span>Dashboard</span>
-                </a>
+                
                 <a href="semi-expandable.php" >
                     <i class="fa-solid fa-calendar-days"></i>
                     <span>Semi-Expandable Property</span>
@@ -53,7 +50,11 @@ $userEmail = $_SESSION['email']; // Safe to use $_SESSION['email']
                 </a>
                   <a href="ics.php">
                     <i class="fa-solid fa-clock"></i>
-                    <span>ICS</span>   
+                    <span>ICS SEMI</span>   
+                </a>
+                 <a href="ics-par.php">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>ICS PAR</span>
                 </a>
 
                 <a href="../function/php/logout.php">
